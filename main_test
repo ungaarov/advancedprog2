@@ -67,33 +67,48 @@ func TestIsPrime(t *testing.T) {
 
 func TestCheckNumbers(t *testing.T) {
 	// test a prime number
-	input := "17\n"
-	expected := "17 is a prime number!\n"
-	scanner := bufio.NewScanner(strings.NewReader(input))
-	res, done := checkNumbers(scanner)
+	res, done := checkNumbers(bufio.NewScanner(strings.NewReader("7\n")))
 	if done {
-		t.Errorf("checkNumbers returned true, but expected false")
+		t.Errorf("checkNumbers returned done as true for a prime number")
 	}
-	if res != expected {
-		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	if res != "7 is a prime number!" {
+		t.Errorf("checkNumbers returned incorrect result for a prime number: got %s, want 7 is a prime number!", res)
 	}
 
 	// test a non-prime number
-	input = "10\n"
-	expected = "10 is not a prime number because it is divisible by 2!\n"
-	scanner = bufio.NewScanner(strings.NewReader(input))
-	res, done = checkNumbers(scanner)
+	res, done = checkNumbers(bufio.NewScanner(strings.NewReader("6\n")))
 	if done {
-		t.Errorf("checkNumbers returned true, but expected false")
+		t.Errorf("checkNumbers returned done as true for a non-prime number")
 	}
-	if res != expected {
-		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	if res != "6 is not a prime number because it is divisible by 2!" {
+		t.Errorf("checkNumbers returned incorrect result for a non-prime number: got %s, want 6 is not a prime number because it is divisible by 2!", res)
+	}
+
+	// test a negative number
+	res, done = checkNumbers(bufio.NewScanner(strings.NewReader("-7\n")))
+	if done {
+		t.Errorf("checkNumbers returned done as true for a negative number")
+	}
+	if res != "Negative numbers are not prime, by definition!" {
+		t.Errorf("checkNumbers returned incorrect result for a negative number: got %s, want Negative numbers are not prime, by definition!", res)
 	}
 
 	// test a non-number input
-	input = "foo\n"
-	expected = "Please enter a whole number!\n"
-	scanner = bufio.NewScanner(strings.NewReader(input))
-	res, done = checkNumbers(scanner)
+	res, done = checkNumbers(bufio.NewScanner(strings.NewReader("not a number\n")))
 	if done {
-		t.Errorf("checkNumbers returned
+		t.Errorf("checkNumbers returned done as true for non-number input")
+	}
+	if res != "Please enter a whole number!" {
+		t.Errorf("checkNumbers returned incorrect result for non-number input: got %s, want Please enter a whole number!", res)
+	}
+
+	// test the quit command
+	res, done = checkNumbers(bufio.NewScanner(strings.NewReader("q\n")))
+	if !done {
+		t.Errorf("checkNumbers did not return done as true for quit command")
+	}
+	if res != "" {
+		t.Errorf("checkNumbers returned a result for quit command: got %s, want empty string", res)
+	}
+}
+
