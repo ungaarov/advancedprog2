@@ -1,0 +1,99 @@
+package main
+
+import (
+	"bytes"
+	"strings"
+	"testing"
+)
+
+func TestIsPrime(t *testing.T) {
+	// test some prime numbers
+	primes := []int{2, 3, 5, 7, 11, 13, 17, 19}
+	for _, p := range primes {
+		ok, res := isPrime(p)
+		if !ok {
+			t.Errorf("%d is a prime number, but isPrime returned false", p)
+		}
+		expected := fmt.Sprintf("%d is a prime number!", p)
+		if res != expected {
+			t.Errorf("Expected '%s', but got '%s'", expected, res)
+		}
+	}
+
+	// test some composite numbers
+	composites := []int{4, 6, 8, 9, 10, 12, 15, 20}
+	for _, c := range composites {
+		ok, res := isPrime(c)
+		if ok {
+			t.Errorf("%d is not a prime number, but isPrime returned true", c)
+		}
+		expected := fmt.Sprintf("%d is not a prime number because it is divisible by %d!", c, smallestDivisor(c))
+		if res != expected {
+			t.Errorf("Expected '%s', but got '%s'", expected, res)
+		}
+	}
+
+	// test some edge cases
+	negative := -1
+	ok, res := isPrime(negative)
+	if ok {
+		t.Errorf("%d is not a prime number, but isPrime returned true", negative)
+	}
+	expected := "Negative numbers are not prime, by definition!"
+	if res != expected {
+		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	}
+
+	zero := 0
+	ok, res = isPrime(zero)
+	if ok {
+		t.Errorf("%d is not a prime number, but isPrime returned true", zero)
+	}
+	expected = "0 is not prime, by definition!"
+	if res != expected {
+		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	}
+
+	one := 1
+	ok, res = isPrime(one)
+	if ok {
+		t.Errorf("%d is not a prime number, but isPrime returned true", one)
+	}
+	expected = "1 is not prime, by definition!"
+	if res != expected {
+		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	}
+}
+
+func TestCheckNumbers(t *testing.T) {
+	// test a prime number
+	input := "17\n"
+	expected := "17 is a prime number!\n"
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	res, done := checkNumbers(scanner)
+	if done {
+		t.Errorf("checkNumbers returned true, but expected false")
+	}
+	if res != expected {
+		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	}
+
+	// test a non-prime number
+	input = "10\n"
+	expected = "10 is not a prime number because it is divisible by 2!\n"
+	scanner = bufio.NewScanner(strings.NewReader(input))
+	res, done = checkNumbers(scanner)
+	if done {
+		t.Errorf("checkNumbers returned true, but expected false")
+	}
+	if res != expected {
+		t.Errorf("Expected '%s', but got '%s'", expected, res)
+	}
+
+	// test a non-number input
+	input = "foo\n"
+	expected = "Please enter a whole number!\n"
+	scanner = bufio.NewScanner(strings.NewReader(input))
+	res, done = checkNumbers(scanner)
+	if done {
+		t.Errorf("checkNumbers returned
